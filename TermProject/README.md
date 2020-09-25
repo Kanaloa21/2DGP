@@ -6,11 +6,11 @@
 디펜스 장르는 과거부터 현재까지 넓은 확장성과 다양한 컨셉, 도전적인 레벨디자인으로 사랑받아온 장르입니다.   
 "랜덤 유닛 디펜스"도 이러한 명작들의 영향을 받아 제작하게 되었습니다.
 
-![Bloons Tower Defense1](/path/BTD1.jpg)
+![Bloons Tower Defense1](/TermProject/path/BTD1.jpg)
 ```
 흔히 "풍타디"라고 많이 알려진 "Bloons Tower Defense(BTD)" 시리즈, 본 게임은 BTD1의 원형을 게임 기본 틀로 설정했습니다.
 ```
-![Random Tower Defense](/path/RTD.jpg)   
+![Random Tower Defense](/TermProject/path/RTD.jpg)   
 ```
 스타크래프트 사용자설정맵으로 알려진 "Random Tower Defense(RTD)", 본 게임의 난이도, 레벨디자인, 컨셉은 RTD 기준으로 설정했습니다.
 ```
@@ -27,7 +27,7 @@
 
 # 2. GaemState(Scene)
 ## 2.1. 다이어그램
-![diagram](/path/Diagram.png)
+![diagram](/TermProject/path/Diagram.png)
 ```
 총 5개의 GaemState로 구분됩니다.
 ```
