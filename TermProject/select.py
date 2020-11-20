@@ -4,7 +4,7 @@ from gobj import *
 FPS = 2
 class Select:
 	def __init__(self, D_num):
-		self.pos = 1000, 600
+		self.pos = 800 + (200 * (D_num % 4)), 610 + (200 * (D_num // 4))
 		self.image = gfw.image.load('res/character/' + str(D_num) +'_wait.png')
 		self.frame_index = 0
 		self.time = 0

@@ -6,36 +6,46 @@ LBTN_DOWN = (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT)
 LBTN_UP   = (SDL_MOUSEBUTTONUP,   SDL_BUTTON_LEFT)
 RBTN_DOWN = (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_RIGHT)
 KEYDN_DEL = (SDL_KEYDOWN, SDLK_DELETE)
-FPS = 2
+FPS = 1
 
-MOVE = 14
+MOVE = 24
 WAIT = 54
-ATTACK = 24
+ATTACK = 14
 
 TEXT_COLOR = (255, 255, 255)
 
 class Doll:
 	def __init__(self, D_num):
-		self.w, self.h = 200, 200
-		self.pos = 800 + (self.w * (D_num % 4)), 600 + (self.h * (D_num // 4))
+		self.w, self.h = 40, 40
+		self.pos = 800 + (200 * (D_num % 4)), 610 + (200 * (D_num // 4))
 		self.visible = False
-		self.state = MOVE
+		self.behavior = MOVE
 		self.wait = gfw.image.load('res/character/' + str(D_num) +'_wait.png')
 		self.move = gfw.image.load('res/character/' + str(D_num) +'_move.png')
-		self.fire = gfw.image.load('res/character/' + str(D_num) +'_attack.png')
+		self.attack = gfw.image.load('res/character/' + str(D_num) +'_attack.png')
 		self.frame_index = 0
 		self.time = 0
 		self.mouse_point = None
+		global BOUNDARY_LEFT, BOUNDARY_RIGHT, BOUNDARY_DOWN, BOUNDARY_UP
+		BOUNDARY_LEFT = 80 // 2
+		BOUNDARY_DOWN = 80 // 2
+		BOUNDARY_RIGHT = get_canvas_width() - BOUNDARY_LEFT
+		BOUNDARY_UP = get_canvas_height() - BOUNDARY_DOWN
 
 	def draw(self):
 		if self.visible:
 			sx = self.frame_index * 200
-			self.move.clip_draw(sx, 0, 200, 200, *self.pos)
-	
+			if self.behavior == MOVE:
+				self.move.clip_draw(sx, 0, 200, 200, *self.pos)
+			elif self.behavior == WAIT:
+				self.wait.clip_draw(sx, 0, 200, 200, *self.pos)
+			elif self.behavior == ATTACK:
+				self.attack.clip_draw(sx, 0, 200, 200, *self.pos)
+
 	def update(self):
 		self.time += 1
 		if self.time % FPS == 0:
-			self.frame_index = (self.frame_index + 1) % self.state
+			self.frame_index = (self.frame_index + 1) % self.behavior
 
 	def draw_position(self):
 		draw_rectangle(*self.get_bb())
@@ -48,14 +58,20 @@ class Doll:
 		pair = (e.type, e.button)
 		if self.mouse_point is None:
 			if pair == LBTN_DOWN:
-				self.visible = True
 				if pt_in_rect(mouse_xy(e), self.get_bb()):
+					self.visible = True
 					self.mouse_point = mouse_xy(e)
 					return True
 			return False
 
 		if pair == LBTN_UP:
 			self.mouse_point = None
+			self.behavior = WAIT
+			x,y = self.pos
+			x = x // 80 * 80 + 40
+			y = y // 80 * 80 + 50
+			#if x < 가 제작 스테이지 또는 선택 스테이지에 놓지 못하도록 한다
+			self.pos = x, y
 			return False
 
 		if e.type == SDL_MOUSEMOTION:
@@ -63,7 +79,7 @@ class Doll:
 			mx,my = mouse_xy(e)
 			px,py = self.mouse_point
 			self.pos = x + mx - px, y + my - py
-			# print((x,y), (mx,my), (px,py), self.pos)
+			print((x,y), (mx,my), (px,py), self.pos)
 			self.mouse_point = mx,my
 		elif (e.type, e.key) == KEYDN_DEL or (e.type, e.button) == RBTN_DOWN:
 			gfw.world.remove(self)
@@ -73,4 +89,5 @@ class Doll:
 
 	def get_bb(self):
 		x,y = self.pos
-		return x - self.w, y - self.h, x + self.w, y + self.h
+		return x - self.w, y - self.h - 10, x + self.w, y + self.h - 10
+
