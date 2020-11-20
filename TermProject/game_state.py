@@ -14,16 +14,11 @@ def enter():
 	global select
 	select = Select(1)
 	gfw.world.add(gfw.layer.select, select)
-
-	global doll
-	doll = Doll(1)
-	gfw.world.add(gfw.layer.doll, doll)
 	pass
 
 def update():
 	gfw.world.update()
 	pass
-
 def draw():
 	gfw.world.draw()
 	if capture is not None:
@@ -46,6 +41,14 @@ def handle_event(e):
 capture = None 
 # 이벤트가 처리되었으면 True, 아니면 False 를 리턴한다
 def handle_mouse(e):
+	if (e.type, e.button) == (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT):
+		for select in gfw.world.objects_at(gfw.layer.select):
+			if pt_in_rect(mouse_xy(e), select.get_bb()):
+				global doll
+				doll = Doll(select.num)
+				gfw.world.add(gfw.layer.doll, doll)
+				print("Doll 생성", gfw.world.count_at(gfw.layer.doll))
+
 	global capture
 	if capture is not None:
 		# capture 가 풀리기를 원하면 False 가 리턴된다
@@ -53,6 +56,7 @@ def handle_mouse(e):
 		if not holding:
 			capture = None
 		return True
+
 	for doll in gfw.world.objects_at(gfw.layer.doll):
 		if doll.handle_event(e):
 			capture = doll
