@@ -3,22 +3,30 @@ import gfw
 from gobj import *
 from doll import Doll
 from select import Select
-
+from ui import Ui
 canvas_width = 1280
 canvas_height = 720
+total_enemies = 12
 
 def enter():
-	gfw.world.init(['bg', 'select', 'doll'])
+	gfw.world.init(['bg', 'ui', 'select', 'doll'])
 	gfw.world.add(gfw.layer.bg, ImageObject('background.png', (640,360)))
-	
+
+	global ui
+	ui = Ui()
+	gfw.world.add(gfw.layer.ui, ui)
+
 	global select
-	select = Select(1)
-	gfw.world.add(gfw.layer.select, select)
+	for i in range(5):
+		select = Select(i)
+		gfw.world.add(gfw.layer.select, select)
+		print(*select.pos)
 	pass
 
 def update():
 	gfw.world.update()
 	pass
+
 def draw():
 	gfw.world.draw()
 	if capture is not None:
@@ -33,9 +41,9 @@ def handle_event(e):
 		if e.key == SDLK_ESCAPE:
 			gfw.pop()
 			return
-
 	if handle_mouse(e):
 		return
+	pass
 
 # capture 가 설정되면 모든 마우스 이벤트는 capture 에게 전달된다
 capture = None 
@@ -43,11 +51,12 @@ capture = None
 def handle_mouse(e):
 	if (e.type, e.button) == (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT):
 		for select in gfw.world.objects_at(gfw.layer.select):
-			if pt_in_rect(mouse_xy(e), select.get_bb()):
+			if pt_in_rect(mouse_xy(e), select.get_bb()) & select.can_place :
 				global doll
 				doll = Doll(select.num)
 				gfw.world.add(gfw.layer.doll, doll)
-				print("Doll 생성", gfw.world.count_at(gfw.layer.doll))
+				select.placed_count += 1
+				print(select.num,"번 Doll 생성, 총", gfw.world.count_at(gfw.layer.doll), "개")
 
 	global capture
 	if capture is not None:
@@ -62,7 +71,12 @@ def handle_mouse(e):
 			capture = doll
 			return True
 
+	if ui.handle_event(e):
+		return True
+		pass
+
 	return False
+	pass
 
 def exit():
 	pass
