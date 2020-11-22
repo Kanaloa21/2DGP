@@ -1,7 +1,7 @@
+import random
 from pico2d import *
 import gfw
 from gobj import *
-import random
 
 LBTN_DOWN = (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT)
 LBTN_UP   = (SDL_MOUSEBUTTONUP,   SDL_BUTTON_LEFT)
@@ -45,7 +45,7 @@ class Ui:
 				if pt_in_rect(mouse_xy(e), self.get_bb()):
 					self.pressed = True
 					self.mouse_point = mouse_xy(e)
-					if self.money > 0:
+					if self.money >= 10:
 						self.money -= 10
 						ri = random.randint(0, 4)
 						for select in gfw.world.objects_at(gfw.layer.select):

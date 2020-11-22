@@ -2,14 +2,16 @@ from pico2d import *
 import gfw
 from gobj import *
 from doll import Doll
+from enemy import Enemy
 from select import Select
 from ui import Ui
+
 canvas_width = 1280
 canvas_height = 720
 total_enemies = 12
 
 def enter():
-	gfw.world.init(['bg', 'ui', 'select', 'doll'])
+	gfw.world.init(['bg', 'ui', 'select', 'enemy', 'doll'])
 	gfw.world.add(gfw.layer.bg, ImageObject('background.png', (640,360)))
 
 	global ui
@@ -21,6 +23,10 @@ def enter():
 		select = Select(i)
 		gfw.world.add(gfw.layer.select, select)
 		print(*select.pos)
+
+	global enemy
+	enemy = Enemy(0)
+	gfw.world.add(gfw.layer.enemy, enemy)
 	pass
 
 def update():
@@ -73,7 +79,6 @@ def handle_mouse(e):
 
 	if ui.handle_event(e):
 		return True
-		pass
 
 	return False
 	pass
