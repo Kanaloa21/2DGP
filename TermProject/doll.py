@@ -30,6 +30,7 @@ class Doll:
 		self.palced_done = False
 		self.lockon = None
 		self.flip = 'h'
+		self.once = True
 		global pos_font
 		pos_font = gfw.font.load(res('ENCR10B.TTF'), 15)
 
@@ -47,7 +48,15 @@ class Doll:
 		self.time += 1
 		if self.time % FPS == 0:
 			self.frame_index = (self.frame_index + 1) % self.behavior
+
 		self.attack_range()
+		if self.lockon != -1 and self.frame_index == 0:
+			for e in gfw.world.objects_at(gfw.layer.enemy):
+				if e.num == self.lockon:
+					e.life -= 10
+				if e.num <= 0:
+					self.lockon = -1
+					self.behavior = WAIT
 
 	def attack_range(self):
 		distance = 100000
@@ -56,15 +65,18 @@ class Doll:
 			ex, ey = e.pos
 			dx, dy = x - ex, y - ey
 			distance = math.sqrt(dx**2 + dy**2)
-		if distance <= 150:
-			self.lockon = e.num
+			break
+		if distance <= 145:
 			self.behavior = ATTACK
+			self.lockon = e.num
 			if ex < x: self.flip = 'h'
 			else: self.flip = ' '
 		elif self.behavior != MOVE:
 			self.behavior = WAIT
 			self.lockon = -1
-		pass
+	
+	
+		
 
 	def draw_position(self):
 		draw_rectangle(*self.get_bb())

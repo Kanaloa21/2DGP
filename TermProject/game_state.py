@@ -5,14 +5,17 @@ from doll import Doll
 from enemy import Enemy
 from select import Select
 from ui import Ui
+import life_gauge
+import enemy_gen
 
 canvas_width = 1280
 canvas_height = 720
 total_enemies = 12
-
 def enter():
-	gfw.world.init(['bg', 'ui', 'select', 'enemy', 'doll'])
-	gfw.world.add(gfw.layer.bg, ImageObject('background.png', (640,360)))
+	gfw.world.init(['bg' , 'ui', 'select', 'enemy', 'doll'])
+	gfw.world.add(gfw.layer.bg, ImageObject('realbackground.png', (640,360)))
+	global cross
+	cross = gfw.image.load('res/cross.png')
 
 	global ui
 	ui = Ui()
@@ -24,19 +27,20 @@ def enter():
 		gfw.world.add(gfw.layer.select, select)
 		print(*select.pos)
 
-	global enemy
-	enemy = Enemy(0)
-	gfw.world.add(gfw.layer.enemy, enemy)
+	life_gauge.load()
 	pass
 
 def update():
 	gfw.world.update()
+	enemy_gen.update()
+
 	pass
 
 def draw():
 	gfw.world.draw()
 	if capture is not None:
 		capture.draw_position()
+		cross.draw(640,360)
 	pass
 
 def handle_event(e):
