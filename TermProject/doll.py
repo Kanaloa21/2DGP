@@ -28,7 +28,7 @@ class Doll:
 		self.time = 0
 		self.mouse_point = None
 		self.palced_done = False
-		self.lockon = None
+		self.lockon = -1
 		self.flip = 'h'
 		self.once = True
 		global pos_font
@@ -54,7 +54,7 @@ class Doll:
 			for e in gfw.world.objects_at(gfw.layer.enemy):
 				if e.num == self.lockon:
 					e.life -= 10
-				if e.num <= 0:
+				if e.life <= 0:
 					self.lockon = -1
 					self.behavior = WAIT
 
@@ -67,8 +67,12 @@ class Doll:
 			distance = math.sqrt(dx**2 + dy**2)
 			break
 		if distance <= 145:
+			if self.behavior == WAIT:
+				self.frame_index = 0
+				print("asdf")
 			self.behavior = ATTACK
 			self.lockon = e.num
+
 			if ex < x: self.flip = 'h'
 			else: self.flip = ' '
 		elif self.behavior != MOVE:

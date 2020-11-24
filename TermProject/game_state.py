@@ -11,6 +11,7 @@ import enemy_gen
 canvas_width = 1280
 canvas_height = 720
 total_enemies = 12
+
 def enter():
 	gfw.world.init(['bg' , 'ui', 'select', 'enemy', 'doll'])
 	gfw.world.add(gfw.layer.bg, ImageObject('realbackground.png', (640,360)))
