@@ -30,9 +30,9 @@ class Doll:
 		self.palced_done = False
 		self.lockon = -1
 		self.flip = 'h'
-		self.once = True
-		global pos_font
-		pos_font = gfw.font.load(res('ENCR10B.TTF'), 15)
+
+		#global pos_font
+		#pos_font = gfw.font.load(res('ENCR10B.TTF'), 15)
 
 	def draw(self):
 		if self.visible:
@@ -45,9 +45,10 @@ class Doll:
 				self.attack.clip_composite_draw(sx, 0, 150, 150, 0, self.flip,*self.pos, 150, 150)
 
 	def update(self):
-		self.time += 1
-		if self.time % FPS == 0:
-			self.frame_index = (self.frame_index + 1) % self.behavior
+		self.time += gfw.delta_time
+		frame = self.time * 60
+		#if self.time % FPS == 0:
+		self.frame_index = int(frame) % self.behavior
 
 		self.attack_range()
 		if self.lockon != -1 and self.frame_index == 0:
@@ -60,34 +61,34 @@ class Doll:
 
 	def attack_range(self):
 		distance = 100000
+		x, y = self.pos
 		for e in gfw.world.objects_at(gfw.layer.enemy):
-			x, y = self.pos
 			ex, ey = e.pos
 			dx, dy = x - ex, y - ey
 			distance = math.sqrt(dx**2 + dy**2)
-			break
+			if distance <= 145: break
+		
 		if distance <= 145:
 			if self.behavior == WAIT:
 				self.frame_index = 0
 				print("asdf")
-			self.behavior = ATTACK
-			self.lockon = e.num
+				self.behavior = ATTACK
+				self.lockon = e.num
 
-			if ex < x: self.flip = 'h'
-			else: self.flip = ' '
+			if ex < x:
+				self.flip = 'h'
+			else: 
+				self.flip = ' '
 		elif self.behavior != MOVE:
 			self.behavior = WAIT
 			self.lockon = -1
-	
-	
-		
 
 	def draw_position(self):
 		draw_rectangle(*self.get_bb())
-		x,y = self.pos
-		x -= 2 * self.w
-		y -= 2 * self.h
-		pos_font.draw(x, y, str(self.pos), TEXT_COLOR)
+		#x,y = self.pos
+		#x -= 2 * self.w
+		#y -= 2 * self.h
+		#pos_font.draw(x, y, str(self.pos), TEXT_COLOR)
 
 	def handle_event(self, e):
 		pair = (e.type, e.button)
@@ -147,12 +148,7 @@ class Doll:
 			mx,my = mouse_xy(e)
 			px,py = self.mouse_point
 			self.pos = x + mx - px, y + my - py
-			#print((x,y), (mx,my), (px,py), self.pos)
 			self.mouse_point = mx,my
-
-#		elif (e.type, e.key) == KEYDN_DEL or (e.type, e.button) == RBTN_DOWN:
-#			gfw.world.remove(self)
-#			return False
 
 		return True
 
