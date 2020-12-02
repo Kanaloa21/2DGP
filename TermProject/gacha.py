@@ -9,7 +9,7 @@ LBTN_UP   = (SDL_MOUSEBUTTONUP,   SDL_BUTTON_LEFT)
 TEXT_COLOR = (255, 100, 100)
 TEXT_COLOR_2 = (0, 0, 0)
 
-class Ui:
+class Gacha:
 	def __init__(self):
 		self.w, self.h = 150, 35
 		self.pos = 1120, 680

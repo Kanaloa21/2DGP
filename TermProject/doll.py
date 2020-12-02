@@ -6,7 +6,6 @@ LBTN_DOWN = (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT)
 LBTN_UP   = (SDL_MOUSEBUTTONUP,   SDL_BUTTON_LEFT)
 RBTN_DOWN = (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_RIGHT)
 KEYDN_DEL = (SDL_KEYDOWN, SDLK_DELETE)
-FPS = 2
 
 ATTACK = 20 # 150*20 = 3000
 MOVE = 24	# 150*24 = 3600
@@ -47,11 +46,11 @@ class Doll:
 	def update(self):
 		self.time += gfw.delta_time
 		frame = self.time * 60
-		#if self.time % FPS == 0:
 		self.frame_index = int(frame) % self.behavior
 
 		self.attack_range()
-		if self.lockon != -1 and self.frame_index == 0:
+
+		if self.lockon != -1 and self.frame_index == 10:
 			for e in gfw.world.objects_at(gfw.layer.enemy):
 				if e.num == self.lockon:
 					e.life -= 10
@@ -60,28 +59,25 @@ class Doll:
 					self.behavior = WAIT
 
 	def attack_range(self):
-		distance = 100000
-		x, y = self.pos
+		global dis_sq
 		for e in gfw.world.objects_at(gfw.layer.enemy):
-			ex, ey = e.pos
-			dx, dy = x - ex, y - ey
-			distance = math.sqrt(dx**2 + dy**2)
-			if distance <= 145: break
+			dis_sq = distance_sq(self.pos, e.pos)
+			if dis_sq <= 145**2: break
 		
-		if distance <= 145:
+		if dis_sq <= 145**2:
 			if self.behavior == WAIT:
 				self.frame_index = 0
-				print("asdf")
 				self.behavior = ATTACK
 				self.lockon = e.num
+			self.flip = self.do_flip(e.pos[0], self.pos[0])
 
-			if ex < x:
-				self.flip = 'h'
-			else: 
-				self.flip = ' '
 		elif self.behavior != MOVE:
 			self.behavior = WAIT
 			self.lockon = -1
+
+	def do_flip(self, ex, x):
+		if ex < x: return 'h'
+		else: return ' '
 
 	def draw_position(self):
 		draw_rectangle(*self.get_bb())
@@ -113,8 +109,8 @@ class Doll:
 						if select.num == self.num:
 							select.placed_count -= 1
 							select.total_count -= 1
-					for ui in gfw.world.objects_at(gfw.layer.ui):
-						ui.money += 5
+					for gacha in gfw.world.objects_at(gfw.layer.gacha):
+						gacha.money += 5
 					print("오브젝트 판매" , gfw.world.count_at(gfw.layer.doll))
 					self.remove()
 			return False

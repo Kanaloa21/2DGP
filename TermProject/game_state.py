@@ -4,7 +4,7 @@ from gobj import *
 from doll import Doll
 from enemy import Enemy
 from select import Select
-from ui import Ui
+from gacha import Gacha
 import life_gauge
 import enemy_gen
 
@@ -13,14 +13,14 @@ canvas_height = 720
 total_enemies = 12
 
 def enter():
-	gfw.world.init(['bg' , 'ui', 'select', 'enemy', 'doll'])
-	gfw.world.add(gfw.layer.bg, ImageObject('realbackground.png', (640,360)))
+	gfw.world.init(['bg' , 'gacha', 'select', 'enemy', 'doll'])
+	gfw.world.add(gfw.layer.bg, ImageObject('background.png', (640,360)))
 	global cross
 	cross = gfw.image.load('res/cross.png')
 
-	global ui
-	ui = Ui()
-	gfw.world.add(gfw.layer.ui, ui)
+	global gacha
+	gacha = Gacha()
+	gfw.world.add(gfw.layer.gacha, gacha)
 
 	global select
 	for i in range(5):
@@ -82,7 +82,7 @@ def handle_mouse(e):
 			capture = doll
 			return True
 
-	if ui.handle_event(e):
+	if gacha.handle_event(e):
 		return True
 
 	return False
