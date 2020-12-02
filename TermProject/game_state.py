@@ -5,6 +5,7 @@ from doll import Doll
 from enemy import Enemy
 from select import Select
 from gacha import Gacha
+from life import Life
 import life_gauge
 import enemy_gen
 
@@ -13,7 +14,7 @@ canvas_height = 720
 total_enemies = 12
 
 def enter():
-	gfw.world.init(['bg' , 'gacha', 'select', 'enemy', 'doll'])
+	gfw.world.init(['bg' , 'gacha', 'life', 'select', 'enemy', 'doll'])
 	gfw.world.add(gfw.layer.bg, ImageObject('background.png', (640,360)))
 	global cross
 	cross = gfw.image.load('res/cross.png')
@@ -21,6 +22,10 @@ def enter():
 	global gacha
 	gacha = Gacha()
 	gfw.world.add(gfw.layer.gacha, gacha)
+
+	global life
+	life = Life()
+	gfw.world.add(gfw.layer.life, life)
 
 	global select
 	for i in range(5):
