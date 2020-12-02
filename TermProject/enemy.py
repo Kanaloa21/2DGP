@@ -40,7 +40,10 @@ class Enemy:
 			if self.target_index <= 3:
 				self.target_index += 1
 				self.target = Enemy.TARGET_POSITIONS[self.target_index]
-			else: self.remove()
+			else: 
+				for life in gfw.world.objects_at(gfw.layer.life):
+					life.life_count -= 1
+				self.remove()
 			return
 		self.delta = dx / distance, dy / distance
 
@@ -60,7 +63,8 @@ class Enemy:
 		x, y = self.pos
 		gy = y - 150 // 2
 		rate = self.life / self.max_life
-		life_gauge.draw(x, gy, 60, rate)
+		if self.life > 0:
+			life_gauge.draw(x, gy, 60, rate)
 
 	def update(self):
 		self.time += 1
