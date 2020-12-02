@@ -6,7 +6,7 @@ from gobj import *
 LBTN_DOWN = (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT)
 LBTN_UP   = (SDL_MOUSEBUTTONUP,   SDL_BUTTON_LEFT)
 
-TEXT_COLOR = (255, 100, 100)
+TEXT_COLOR_1 = (255, 100, 100)
 TEXT_COLOR_2 = (0, 0, 0)
 
 class Gacha:
@@ -30,7 +30,7 @@ class Gacha:
 			self.image.draw(*self.pos)
 		x -= 135
 		y += 15
-		count_font.draw(x, y, 'Random Unit Gacha -> 10 $!', TEXT_COLOR)
+		count_font.draw(x, y, 'Random Unit Gacha -> 10 $!', TEXT_COLOR_1)
 		y -= 25
 		txt = 'You have                           ' + str(self.money) + '$'
 		count_font.draw(x, y, txt, TEXT_COLOR_2)
