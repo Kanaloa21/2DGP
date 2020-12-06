@@ -7,7 +7,7 @@ TEXT_COLOR_2 = (255, 255, 255)
 
 class Life():
 	def __init__(self):
-		self.life_count = 10
+		self.life_count = 1
 		self.text_pos_1 = 985, 105
 		self.text_pos_2 = 1140, 105
 		self.text = gfw.font.load(res('Maplestory Light.ttf'), 40)

@@ -1,5 +1,6 @@
-from pico2d import *
+import json
 import gfw
+from pico2d import *
 from gobj import *
 
 LBTN_DOWN = (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT)
@@ -14,8 +15,13 @@ WAIT = 54	# 150*54 = 8100
 TEXT_COLOR = (255, 255, 255)
 
 class Doll:
-	def __init__(self, D_num):
-		self.num = D_num
+	def __init__(self, name, num, damage, rpm, boundary, attack_frame):
+		self.name = name
+		self.num = num
+		self.damage = damage
+		self.rpm = rpm
+		self.boundary = boundary
+		self.ATTACK = attack_frame
 		self.w, self.h = 40, 40
 		self.pos = 1000 + (80 * (self.num % 4)), 610 - (80 * (self.num // 4))
 		self.visible = False
@@ -40,12 +46,12 @@ class Doll:
 				self.move.clip_composite_draw(sx, 0, 150, 150, 0, self.flip,*self.pos, 150, 150)
 			elif self.behavior == WAIT:
 				self.wait.clip_composite_draw(sx, 0, 150, 150, 0, self.flip,*self.pos, 150, 150)
-			elif self.behavior == ATTACK:
+			elif self.behavior == self.ATTACK:
 				self.attack.clip_composite_draw(sx, 0, 150, 150, 0, self.flip,*self.pos, 150, 150)
 
 	def update(self):
 		self.time += gfw.delta_time
-		frame = self.time * 60
+		frame = self.time * self.rpm
 		self.frame_index = int(frame) % self.behavior
 
 		self.attack_range()
@@ -53,22 +59,23 @@ class Doll:
 		if self.lockon != -1 and self.frame_index == 10:
 			for e in gfw.world.objects_at(gfw.layer.enemy):
 				if e.num == self.lockon:
-					e.life -= 10
-				if e.life <= 0:
-					self.lockon = -1
-					self.behavior = WAIT
+					e.life -= self.damage
+					if e.life <= 0:
+						e.life = 0
+						self.lockon = -1
+						self.behavior = WAIT
 
 	def attack_range(self):
 		global dis_sq
 		for e in gfw.world.objects_at(gfw.layer.enemy):
 			dis_sq = distance_sq(self.pos, e.pos)
-			if dis_sq <= 145**2: break
+			if dis_sq <= self.boundary**2: break
 		
-		if dis_sq <= 145**2:
+		if dis_sq <= self.boundary**2:
 			if self.behavior == WAIT:
 				self.frame_index = 0
-				self.behavior = ATTACK
-				self.lockon = e.num
+			self.behavior = self.ATTACK
+			self.lockon = e.num
 			self.flip = self.do_flip(e.pos[0], self.pos[0])
 
 		elif self.behavior != MOVE:
