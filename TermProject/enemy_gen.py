@@ -21,12 +21,12 @@ def generate_wave():
     print("적 생성", wave_index, level)
 
     wave_index += 1
-    next_wave = random.uniform(4, 5)
+    next_wave = random.uniform(2, 4)
 
 def enemy_level():
     global wave_index
-    level =  wave_index // 3 + 1
-    if wave_index % 3 == 0:
+    level =  wave_index // 5 + 1
+    if wave_index % 5 == 0:
          level += 1
 #    level = (wave_index - 5) // 10 - 3;
 #    percent = random.randrange(100)

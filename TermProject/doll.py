@@ -103,19 +103,19 @@ class Doll:
 					return True
 				elif pt_in_rect(mouse_xy(e), self.get_bb()) and self.palced_done == True:
 					self.remove()
-					for select in gfw.world.objects_at(gfw.layer.select):
-						if select.num == self.num:
-							select.placed_count -= 1
+					for selection in gfw.world.objects_at(gfw.layer.selection):
+						if selection.num == self.num:
+							selection.placed_count -= 1
 					print("오브젝트 되돌림" , gfw.world.count_at(gfw.layer.doll))
 					return True
 
 			if pair == RBTN_DOWN:
 				if pt_in_rect(mouse_xy(e), self.get_bb()) and self.palced_done == True:
 					
-					for select in gfw.world.objects_at(gfw.layer.select):
-						if select.num == self.num:
-							select.placed_count -= 1
-							select.total_count -= 1
+					for selection in gfw.world.objects_at(gfw.layer.selection):
+						if selection.num == self.num:
+							selection.placed_count -= 1
+							selection.total_count -= 1
 					for gacha in gfw.world.objects_at(gfw.layer.gacha):
 						gacha.money += 5
 					print("오브젝트 판매" , gfw.world.count_at(gfw.layer.doll))
@@ -129,17 +129,17 @@ class Doll:
 			x = x // 80 * 80 + 40
 			y = y // 80 * 80 + 50
 			if x <= 0 or x >= 960 or y <= 159 or y >= 720:
-				for select in gfw.world.objects_at(gfw.layer.select):
-					if select.num == self.num:
-						select.placed_count -= 1
+				for selection in gfw.world.objects_at(gfw.layer.selection):
+					if selection.num == self.num:
+						selection.placed_count -= 1
 						print("범위 바깥엔 배치할 수 없습니다. 오브젝트 삭제" , gfw.world.count_at(gfw.layer.doll))
 				self.remove()
 				return False
 			for doll in gfw.world.objects_at(gfw.layer.doll):
 				if doll.pos == (x, y):
-					for select in gfw.world.objects_at(gfw.layer.select):
-						if select.num == self.num:
-							select.placed_count -= 1
+					for selection in gfw.world.objects_at(gfw.layer.selection):
+						if selection.num == self.num:
+							selection.placed_count -= 1
 							print("이미 배치된 인형이 있습니다. 오브젝트 삭제" , gfw.world.count_at(gfw.layer.doll))
 					self.remove()
 			self.pos = x, y

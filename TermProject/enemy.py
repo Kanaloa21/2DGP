@@ -91,7 +91,9 @@ class Enemy:
 			if self.frame_index == Enemy.DEAD - 1:
 				print('적 사망', self.num)
 				for gacha in gfw.world.objects_at(gfw.layer.gacha):
-					gacha.money += 5
+					gacha.money += 1 * self.level
+				for life in gfw.world.objects_at(gfw.layer.life):
+					life.score += 1 * self.level
 				self.remove()
 
 	def remove(self):

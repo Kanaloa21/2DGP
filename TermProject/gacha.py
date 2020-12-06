@@ -17,7 +17,7 @@ class Gacha:
 		self.image_pressed = gfw.image.load('res/longbutton_pressed.png')
 		self.pressed = False
 		self.mouse_point = None
-		self.money = 100
+		self.money = 10
 		global count_font
 		count_font = gfw.font.load(res('Maplestory Light.ttf'), 20)
 
@@ -32,7 +32,7 @@ class Gacha:
 		y += 15
 		count_font.draw(x, y, 'Random Unit Gacha -> 10 $!', TEXT_COLOR_1)
 		y -= 25
-		txt = 'You have                           ' + str(self.money) + '$'
+		txt = 'You have                         ' + str(self.money) + '$'
 		count_font.draw(x, y, txt, TEXT_COLOR_2)
 
 	def update(self):
@@ -48,9 +48,9 @@ class Gacha:
 					if self.money >= 10:
 						self.money -= 10
 						ri = random.randint(0, 4)
-						for select in gfw.world.objects_at(gfw.layer.select):
-							if select.num == ri:
-								select.total_count += 1
+						for selection in gfw.world.objects_at(gfw.layer.selection):
+							if selection.num == ri:
+								selection.total_count += 1
 					return True
 				return False
 
