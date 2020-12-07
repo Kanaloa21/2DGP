@@ -13,7 +13,7 @@ https://youtu.be/vKDIOAa0SAA
 https://youtu.be/2hMc-mY5ONY 
 
 게임 setup파일 다운로드 링크   
-https://drive.google.com/file/d/1-Iev3Vyv9K0h04t5jGv28aaMD9_db8Zt/view?usp=sharing
+https://drive.google.com/file/d/1uHHnrL6-PSMSiuUc2nNcM5bbxodPCGMe/view?usp=sharing
 
 # 1. 게임 컨셉과 진행 흐름
 기존의 한정된 자원(배치 할 수 있는 캐릭터의 수)으로 스테이지를 클리어 했던 기존 디펜스 장르는 정적인 플레이와 정석적인 공략법으로 인해 다회차 플레이에 대한 도전욕구가 떨어졌습니다.   
