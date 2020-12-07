@@ -19,8 +19,8 @@ class Enemy:
 		self.action = Enemy.MOVE
 		self.target_index = 0
 		self.target = Enemy.TARGET_POSITIONS[self.target_index]
-		self.move = gfw.image.load('res/e' + str(0) +'_m.png')
-		self.dead = gfw.image.load('res/e' + str(0) +'_d.png')
+		self.move = gfw.image.load(res('enemy/e' + str(0) +'_m.png'))
+		self.dead = gfw.image.load(res('enemy/e' + str(0) +'_d.png'))
 		self.frame_index = 0
 		self.time = 0
 		self.flip = True
@@ -29,7 +29,7 @@ class Enemy:
 		self.life = self.max_life
 		self.once = True
 		global pos_font
-		pos_font = gfw.font.load(res('ENCR10B.TTF'), 15)
+		pos_font = gfw.font.load(res('font/ENCR10B.TTF'), 15)
 
 	def set_target(self):
 		x,y = self.pos
@@ -93,7 +93,7 @@ class Enemy:
 				for gacha in gfw.world.objects_at(gfw.layer.gacha):
 					gacha.money += 1 * self.level
 				for life in gfw.world.objects_at(gfw.layer.life):
-					life.score += 1 * self.level
+					life.score += 1 * self.level // 2 + 1
 				self.remove()
 
 	def remove(self):

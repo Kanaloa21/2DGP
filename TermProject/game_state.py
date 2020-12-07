@@ -6,6 +6,7 @@ from enemy import Enemy
 from selection import Selection
 from gacha import Gacha
 from life import Life
+
 import life_gauge
 import enemy_gen
 import highscore
@@ -15,9 +16,9 @@ canvas_height = 720
 
 total_enemies = 12
 
-STATE_IN_GAME, STATE_PAUSED, STATE_GAME_OVER = range(3)
-TEXT_COLOR = (255, 255, 255)
+STATE_IN_GAME, STATE_PAUSED, STATE_GAME_OVER, STATE_GAME_CLEAR = range(4)
 
+TEXT_COLOR = (255, 255, 255)
 
 DOLL_NAMES = [
 "Grizzly", "C96", "K5", "M950A",
@@ -29,23 +30,24 @@ NAME = ''
 DAMAGE = ''
 RPM = ''
 BOUNDARY = ''
-ATTACK_FRAME = ''
 
 def enter():
 	gfw.world.init(['bg' , 'gacha', 'life', 'selection', 'enemy', 'doll', 'ui'])
 	gfw.world.add(gfw.layer.bg, ImageObject('background.png', (640,360)))
 
-	global music_bg, music_end
-	music_bg = load_music(res('BG.mp3'))
+	global shortbutton, shortbutton_pressed
+	shortbutton = gfw.image.load(res('ui/shortbutton.png'))
+	shortbutton_pressed = gfw.image.load(res('ui/shortbutton_pressed.png'))
+
+	global music_bg
+	music_bg = load_music(res('sound/bg.mp3'))
 	music_bg.set_volume(10)
-	music_end = load_music(res('end.mp3'))
-	music_end.set_volume(10)
-	
+
 	highscore.load()
 
 	global font_1, font_2
-	font_1 = gfw.font.load(res('Maplestory Light.ttf'), 20)
-	font_2 = gfw.font.load(res('LCD2N___.TTF'), 20)
+	font_1 = gfw.font.load(res('font/Maplestory Light.ttf'), 20)
+	font_2 = gfw.font.load(res('font/LCD2N___.TTF'), 20)
 
 	global cross
 	cross = gfw.image.load(res('cross.png'))
@@ -62,15 +64,18 @@ def enter():
 	for name in DOLL_NAMES:
 		selection = Selection(name)
 		gfw.world.add(gfw.layer.selection, selection)
-		print(*selection.pos)
 
 	life_gauge.load()
 
 	global game_state
 	game_state = STATE_IN_GAME
 
-	global game_over_image
-	game_over_image = gfw.image.load('res/game_over.png')
+	global helper_image
+	helper_image = gfw.image.load(res('helper.png'))
+
+	global game_over_image, game_win_image
+	game_over_image = gfw.image.load(res('game_over.png'))
+	game_win_image = gfw.image.load(res('game_win.png'))
 
 	start_game()
 
@@ -78,18 +83,33 @@ def start_game():
 	global game_state
 	game_state = STATE_IN_GAME
 
-	#life.reset()
 	gfw.world.clear_at(gfw.layer.doll)
 	gfw.world.clear_at(gfw.layer.enemy)
 	gfw.world.remove(highscore)
 
 	music_bg.repeat_play()
 
+def pause_game():
+	global game_state
+	game_state = STATE_PAUSED
+	music_bg.pause()
+
+def resume_game():
+	global game_state
+	game_state = STATE_IN_GAME
+	music_bg.resume()
+
 def end_game():
 	global game_state
 	game_state = STATE_GAME_OVER
 	music_bg.stop()
-	music_end.repeat_play()
+	highscore.add(life.score)
+	gfw.world.add(gfw.layer.ui, highscore)
+
+def clear_game():
+	global game_state
+	game_state = STATE_GAME_CLEAR
+	music_bg.stop()
 	highscore.add(life.score)
 	gfw.world.add(gfw.layer.ui, highscore)
 
@@ -101,6 +121,8 @@ def update():
 		for o in gfw.world.objects_at(gfw.layer.life):
 			if o.life_count == 0:
 				end_game()
+			if o.score >= 500:
+				clear_game()
 		global time, frame_index
 
 def draw():
@@ -111,10 +133,24 @@ def draw():
 	font_1.draw(1090, 275, 'DAMAGE: ' + str(DAMAGE), TEXT_COLOR)
 	font_1.draw(1090, 240, 'RPM: ' + str(RPM), TEXT_COLOR)
 	font_1.draw(1090, 205, 'RANGE: ' + str(BOUNDARY), TEXT_COLOR)
-	global time, frame_index
+
+	global shortbutton, shortbutton_pressed
 	for selection in gfw.world.objects_at(gfw.layer.selection):
-		if selection.name == NAME: selection.dp = True
-		else: selection.dp = False
+		if selection.name == NAME:
+			selection.dp = True
+			if selection.num > 4:
+				font_x, font_y = 680, 30
+				if selection.pressed == True: 
+					shortbutton_pressed.draw(717, 30)
+					font_1.draw(font_x, font_y - 3, '제작 가능', TEXT_COLOR)
+				else: 
+					shortbutton.draw(717, 30)
+					if selection.mft[0] and selection.mft[1] and selection.mft[2]:
+						font_1.draw(font_x, font_y, '제작 가능', TEXT_COLOR)
+					else:
+						font_1.draw(font_x, font_y, '제작 불가', TEXT_COLOR)
+		else:
+			selection.dp = False
 
 	if capture is not None:
 		capture.draw_position()
@@ -124,7 +160,14 @@ def draw():
 		x = get_canvas_width() // 2
 		y = get_canvas_height() // 2
 		game_over_image.draw(x, y)
-	pass
+
+	if game_state == STATE_GAME_CLEAR:
+		x = get_canvas_width() // 2
+		y = get_canvas_height() // 2
+		game_win_image.draw(x, y)
+
+	if game_state == STATE_PAUSED:
+		helper_image.draw(640, 360)
 
 def handle_event(e):
 	if e.type == SDL_QUIT:
@@ -136,6 +179,11 @@ def handle_event(e):
 		elif e.key == SDLK_RETURN:
 			if game_state == STATE_GAME_OVER:
 				start_game()
+			elif game_state == STATE_PAUSED:
+				resume_game()
+		elif e.key == SDLK_p:
+			if game_state == STATE_IN_GAME:
+				pause_game()
 
 	if handle_mouse(e):
 		return
@@ -144,6 +192,9 @@ capture = None
 
 def handle_mouse(e):
 	if (e.type, e.button) == (SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT):
+		if game_state == STATE_PAUSED: resume_game()
+		if pt_in_rect(mouse_xy(e), (990, 80, 1050, 130)):
+			pause_game()
 		for selection in gfw.world.objects_at(gfw.layer.selection):
 			if pt_in_rect(mouse_xy(e), selection.get_bb()):
 				global NAME, DAMAGE, RPM, BOUNDARY, ATTACK_FRAME
@@ -151,7 +202,6 @@ def handle_mouse(e):
 				DAMAGE = selection.damage
 				RPM = selection.rpm
 				BOUNDARY = selection.boundary
-				ATTACK_FRAME = selection.attack_frame
 				if selection.can_place:
 					global doll
 					doll = Doll(selection.name, selection.num, selection.damage, selection.rpm, selection.boundary, selection.attack_frame)
@@ -181,13 +231,10 @@ def handle_mouse(e):
 				return True
 
 	return False
-	pass
 
 def exit():
-	global music_bg, music_end
+	global music_bg
 	del music_bg
-	del music_end
-	pass
 
 if __name__ == '__main__':
 	gfw.run_main()

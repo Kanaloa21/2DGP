@@ -13,13 +13,15 @@ class Gacha:
 	def __init__(self):
 		self.w, self.h = 150, 35
 		self.pos = 1120, 680
-		self.image = gfw.image.load('res/longbutton.png')
-		self.image_pressed = gfw.image.load('res/longbutton_pressed.png')
+		self.image = gfw.image.load(res('ui/longbutton.png'))
+		self.image_pressed = gfw.image.load(res('ui/longbutton_pressed.png'))
 		self.pressed = False
 		self.mouse_point = None
-		self.money = 10
-		global count_font
-		count_font = gfw.font.load(res('Maplestory Light.ttf'), 20)
+		self.money = 30
+		global count_font, sound_gacha
+		count_font = gfw.font.load(res('font/Maplestory Light.ttf'), 20)
+		sound_gacha = load_wav(res('sound/gacha.wav'))
+		sound_gacha.set_volume(10)
 
 	def draw(self):
 		x,y = self.pos
@@ -47,10 +49,13 @@ class Gacha:
 					self.mouse_point = mouse_xy(e)
 					if self.money >= 10:
 						self.money -= 10
+						global sound_gacha
+						sound_gacha.play()
 						ri = random.randint(0, 4)
 						for selection in gfw.world.objects_at(gfw.layer.selection):
 							if selection.num == ri:
 								selection.total_count += 1
+							
 					return True
 				return False
 

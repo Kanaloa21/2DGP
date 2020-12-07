@@ -16,7 +16,7 @@ class Entry:
 
 def load():
     global font, image
-    font = gfw.font.load(res('Maplestory Light.ttf'), 20)
+    font = gfw.font.load(res('font/Maplestory Light.ttf'), 20)
 
     global scores
     try:
@@ -58,7 +58,7 @@ def draw():
     y = 170
     for e in scores:
         str = "{:2d} {:7.1f}".format(no, e.score)
-        color = (255, 255, 128) if no == last_rank else (223, 255, 223)
+        color = (255, 255, 128) if no == last_rank else (255, 255, 255)
         font.draw(70, y, str, color)
         font.draw(320, y, time.asctime(time.localtime(e.time)), color)
         y -= 30
