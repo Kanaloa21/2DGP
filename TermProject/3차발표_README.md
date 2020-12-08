@@ -51,7 +51,10 @@ https://drive.google.com/file/d/1uHHnrL6-PSMSiuUc2nNcM5bbxodPCGMe/view?usp=shari
 ```
 실제 인게임 캡쳐화면, 리소스 변경후 모습
 ```
-
+![s2](/TermProject/res/helper.png)
+```
+조작법   
+```
 
 ---------------------------------------
 
